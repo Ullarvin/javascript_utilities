@@ -1,17 +1,63 @@
 .calendar_container
 {
     width: 200px;
-    padding:5px;
+    position: absolute;
+    padding-top: 5px;
 }
 
-.calendar_header
+.calendar_body, .calendar_container
+{
+    background-color: transparent;
+}
+
+.calendar_header, .calendar_month_dd, .calendar_year_dd, .calendar_row
 {
     margin:auto;
     text-align: center;
+}
+
+.calendar_tbody, .calendar_header
+{
+    box-shadow: 0px -1px 2px 2px #d67878;
 }
 
 .calendar_table
 {
     margin-left: auto;
     margin-right: auto;
+    border-collapse: collapse;
+    background-color:rgb(243, 207, 159);
 }
+
+.calendar_day, .clear_date, .today
+{
+    text-align: center;
+    cursor: pointer;
+    padding: 2px;
+    margin: 2px;
+}
+
+.calendar_nextmonth, .calendar_nextyear 
+{
+    text-align: right;
+    cursor: pointer;
+    padding: 2px;
+    margin: 2px;
+}
+
+.calendar_prevmonth, .calendar_prevyear
+{
+    text-align: left;
+    cursor: pointer;
+    padding: 2px;
+    margin: 2px;
+}
+
+.calendar_prevmonth:hover, .calendar_nextyear:hover,
+.calendar_nextmonth:hover, .calendar_prevyear:hover,
+.calendar_day:hover, .clear_date:hover, .today:hover
+{
+    background-color:tomato;
+    
+}
+
