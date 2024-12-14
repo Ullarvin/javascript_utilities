@@ -4,46 +4,18 @@ class calendar
     current_month = "";
     current_year = "";
 
-    hide_type = 1;
 
     /**
      * initialize class
-     * @param {element|array|object} elements element getting calendar popup
-     * @param {string} hide element getting calendar popup
      */
-    constructor(elements, hide = "hide") 
+    constructor() 
     {
         this.date = new Date();
         this.current_day = this.date.getDate();
         this.current_month = this.date.getMonth();
         this.current_year = this.date.getFullYear();
 
-        if(hide == "hide")
-        {
-            this.hide_type = 1;
-        }
-        else if(hide == "remove")
-        {
-            this.hide_type = 2;
-        }
-        else
-        {
-            throw new Error('Invalid "hide" option, must pass either "hide" or "remove".');
-        }
-
         //addEvent(ele,"onclick", "");
-        
-        if(typeof elements == "object" || typeof elements == "array"){
-            for(const ele of elements)
-            {
-                console.log(ele);
-                ele.addEventListener('focus', this.showCalendar(ele));
-            }
-        }
-        else
-        {
-            
-        }
     }
 
     /**
@@ -118,6 +90,11 @@ class calendar
         return new Date(year, month, day).getDay();
     }
 
+    getDate(format = "Y-m-d")
+    {
+        return this.current_year + "-" + this.current_month + "-" + this.current_day;
+    }
+
     /**
      * Setter for date properties
      * @param {int} year 
@@ -167,7 +144,7 @@ class calendar
      * Create calendar div to display under elements
      * @returns {element}
      */
-    createCalender()
+    createCalender(ele)
     {
         
         let monthName = this.getMonthName(this.current_year, this.current_month);
@@ -247,6 +224,7 @@ class calendar
 
                 td = tr.insertCell();
                 let div_num = this.createElements("div", "", ["calendar_day"], day);
+                div_num.onclick = function() { this.selectingDate(div_num, ele,"day") };
                 td.appendChild(div_num);
                 day++;
             }
@@ -256,7 +234,6 @@ class calendar
                 td.appendChild(document.createTextNode(""));
             }
         }
-
         
         table.appendChild(theader);
         table.appendChild(tbody);
@@ -272,7 +249,7 @@ class calendar
      * @param {element} element 
      * @param {string} type 
      */
-    selectingDate(element, type)
+    selectingDate(parent, element, type)
     {
         const types = {'day':0, 'month':1, 'year':2};
         let day = this.current_day;
@@ -282,10 +259,10 @@ class calendar
         switch(types.type)
         {
             case 0:
-                day = element.innerHTML;
+                day = parent.innerHTML;
                 break;
             case 1:
-                if(element.innerHTML == ">>")
+                if(parent.innerHTML == ">>")
                 {
                     month = this.getNextMonth();
                 }
@@ -295,7 +272,7 @@ class calendar
                 }
                 break;
             case 2:
-                if(element.innerHTML == ">>")
+                if(parent.innerHTML == ">>")
                 {
                     year = this.getNextYear();
                 }
@@ -307,7 +284,9 @@ class calendar
         }
 
         //set new date
-        setDate(day, month, year);
+        this.setDate(day, month, year);
+        console.log(element);
+        element.value = this.getDate();
         
     }
 
@@ -318,7 +297,7 @@ class calendar
     showCalendar(ele)
     {
         let body = document.body;
-        let calendar = this.createCalender();
+        let calendar = this.createCalender(ele);
         
         var offsets = ele.getBoundingClientRect();
         
@@ -334,14 +313,11 @@ class calendar
      */
     hideCalendar()
     {
-        if(this.hide_type == 1)
-        {
-            document.getElementById("calendar_container").style.display = "none";
-        }
-        else
-        {
+        setTimeout(function() {
+            //your code to be executed after 1 second
             document.getElementById("calendar_container").remove();
-        }
+          }, 10000);
+        
     }
 
     /**

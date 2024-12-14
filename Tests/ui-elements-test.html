@@ -22,12 +22,13 @@
 
 <script>
     var elements = document.getElementsByClassName("date");
-    const myCal = new calendar(elements, "remove");
-    
-
-    //let test = document.getElementById("test");
-
-    //myCal.showCalendar(document.getElementById("time"));
-    //myCal.showCalendar(document.getElementById("date"));
-    //myCal.hideCalendar("remove");
+    const myCal = new calendar();
+    if(typeof elements == "object" || typeof elements == "array"){
+        for(const ele of elements)
+        {
+            console.log(ele);
+            ele.onfocus = function(){ myCal.showCalendar(ele) };
+            ele.onblur = function(){ myCal.hideCalendar() };
+        }
+    }
 </script>
