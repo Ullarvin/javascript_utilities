@@ -7,11 +7,11 @@ class calendar
     hide_type = 1;
 
     /**
-     * 
-     * @param {element} ele element getting calendar popup
+     * initialize class
+     * @param {element|array|object} elements element getting calendar popup
      * @param {string} hide element getting calendar popup
      */
-    constructor(ele, hide = "hide") 
+    constructor(elements, hide = "hide") 
     {
         this.date = new Date();
         this.current_day = this.date.getDate();
@@ -32,6 +32,18 @@ class calendar
         }
 
         //addEvent(ele,"onclick", "");
+        
+        if(typeof elements == "object" || typeof elements == "array"){
+            for(const ele of elements)
+            {
+                console.log(ele);
+                ele.addEventListener('focus', this.showCalendar(ele));
+            }
+        }
+        else
+        {
+            
+        }
     }
 
     /**
@@ -53,7 +65,7 @@ class calendar
     }
 
     /**
-     * 
+     * return last day of the current month
      * @param {int} year 
      * @param {int} month 
      * @returns {int} last day of the month
@@ -64,7 +76,7 @@ class calendar
     }
 
     /**
-     * 
+     * get fullname of provided month
      * @param {int} month 
      * @returns {string} fullname of month
      */
@@ -122,13 +134,42 @@ class calendar
     }
 
     /**
+     * Create elements per parameters
+     * @param {string} tag 
+     * @param {string} id 
+     * @param {array} classes 
+     * @param {string|element} content 
+     * @returns 
+     */
+    createElements(tag, id = "", classes = [], content = "")
+    {
+        let element = document.createElement(tag);
+        element.id = id;
+        
+        for(const cl of classes)
+        {
+            element.classList.add(cl);
+        }
+
+        if(typeof content == 'string' || typeof content == 'number')
+        {
+            element.appendChild(document.createTextNode(content));
+        }
+        else
+        {
+            element.appendChild(content);
+        }
+
+        return element;
+    }
+
+    /**
      * Create calendar div to display under elements
      * @returns {element}
      */
     createCalender()
     {
         
-        console.log(document.getElementById("test"));
         let monthName = this.getMonthName(this.current_year, this.current_month);
         let daysInMonth = this.calcMonth(this.current_year, this.current_month);
         let firstWeekDayOfMonth = this.getDayOfWeek(this.current_year, this.current_month, 1);
@@ -136,43 +177,17 @@ class calendar
         let weekGroups = [];
         weekGroups[0] = [];
 
-        let div_container = document.createElement("div");
-        div_container.classList.add("calendar_container");
-        div_container.id = "calendar_container";
-
-        let year = document.createElement("div");
-        year.classList.add("calendar_year_dd");
-        year.appendChild(document.createTextNode(this.current_year));
-
-        let nextyear= document.createElement("div");
-        nextyear.classList.add("calendar_nextyear");
-        nextyear.appendChild(document.createTextNode(">>"));
-
-        let prevyear = document.createElement("div");
-        prevyear.classList.add("calendar_prevyear");
-        prevyear.appendChild(document.createTextNode("<<"));
-
-        let nextmonth = document.createElement("div");
-        nextmonth.classList.add("calendar_nextmonth");
-        nextmonth.appendChild(document.createTextNode(">>"));
-
-        let prevmonth = document.createElement("div");
-        prevmonth.classList.add("calendar_prevmonth");
-        prevmonth.appendChild(document.createTextNode("<<"));
-
-        let month = document.createElement("div");
-        month.classList.add("calendar_month_dd");
-        month.appendChild(document.createTextNode(monthName));
-        
-
-        let div_body = document.createElement("div");
-        div_body.classList.add("calendar_body");
-
-        let table = document.createElement("table");
-        table.classList.add("calendar_table");
-
-        let theader = table.createTHead();
-        theader.classList.add("calendar_header");
+        //create elements to make up table
+        let div_container = this.createElements("div", "calendar_container", ["calendar_container"] );
+        let year = this.createElements("div", "", ["calendar_year_dd"], this.current_year );
+        let nextyear = this.createElements("div", "", ["calendar_nextyear"], ">>" );
+        let prevyear = this.createElements("div", "", ["calendar_prevyear"], "<<" );
+        let nextmonth = this.createElements("div", "", ["calendar_nextmonth"], ">>" );
+        let prevmonth = this.createElements("div", "", ["calendar_prevmonth"], "<<" );
+        let month = this.createElements("div", "", ["calendar_month_dd"], monthName);
+        let div_body = this.createElements("div", "", ["calendar_body"]);
+        let table = this.createElements("table", "", ["calendar_table"]);
+        let theader = this.createElements("thead", "", ["calendar_header"]);
         let tr = theader.insertRow();
         tr.classList.add("calendar_header_row");
         
@@ -206,19 +221,17 @@ class calendar
         tr.classList.add("calendar_row");
         td = tr.insertCell();
         td.colSpan = "3";
-        td.innerHTML = "<div class='today'>Today</div>";
+        td.append(this.createElements("div", "", ["today"], "Today"));
 
         td = tr.insertCell();
         
         tr.classList.add("calendar_row");
         td = tr.insertCell();
         td.colSpan = "3";
-        td.innerHTML = "<div class='clear_date'>Clear</div>";
-
+        td.append(this.createElements("div", "", ["clear_date"], "Clear"));
         tr = tbody.insertRow();
         tr.classList.add("calendar_row");
         
-        console.log(monthName);
         //create array of weeks that contain each numeric day aligned with the week day
         for(let i=0, day=1; day <= daysInMonth; i++)
         {
@@ -233,9 +246,7 @@ class calendar
                 }
 
                 td = tr.insertCell();
-                let div_num = document.createElement("div");
-                div_num.classList.add("calendar_day");
-                div_num.innerHTML = day
+                let div_num = this.createElements("div", "", ["calendar_day"], day);
                 td.appendChild(div_num);
                 day++;
             }
@@ -246,8 +257,7 @@ class calendar
             }
         }
 
-        console.log(table);
-
+        
         table.appendChild(theader);
         table.appendChild(tbody);
         div_body.appendChild(table);
@@ -301,6 +311,10 @@ class calendar
         
     }
 
+    /**
+     * show calendar under provided element
+     * @param {element} ele 
+     */
     showCalendar(ele)
     {
         let body = document.body;
@@ -315,6 +329,9 @@ class calendar
         body.appendChild(calendar);
     }
 
+    /**
+     * hide calendar when element is not active
+     */
     hideCalendar()
     {
         if(this.hide_type == 1)

@@ -4,7 +4,16 @@
 <script src="../ui-elements/calendar.js"></script> 
 
 <body>
-    <div style="padding:5px; margin:2px; padding-left:200px;"><input type="text" id="date"></div>
+    <div style="padding:5px; margin:2px; padding-left:200px;">
+        <input type="text" id="date1" class="date">
+    </div>
+
+    <div style="padding:5px; margin:2px; padding-left:100px;">
+        <input type="text" id="date2" class="date">
+    </div>
+    <div style="padding:50px; margin:2px;">
+        <input type="text" id="date3" class="date">
+    </div>
     <div style="padding:5px; margin:2px;"><input type="time" id="time"></div>
     
     <div id="test"></div>
@@ -12,11 +21,13 @@
 </html>
 
 <script>
+    var elements = document.getElementsByClassName("date");
+    const myCal = new calendar(elements, "remove");
+    
 
-    const myCal = new calendar("", "remove");
-    let test = document.getElementById("test");
+    //let test = document.getElementById("test");
 
     //myCal.showCalendar(document.getElementById("time"));
-    myCal.showCalendar(document.getElementById("date"));
+    //myCal.showCalendar(document.getElementById("date"));
     //myCal.hideCalendar("remove");
 </script>
