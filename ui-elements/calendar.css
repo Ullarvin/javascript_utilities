@@ -29,7 +29,7 @@
     background-color:rgb(243, 207, 159);
 }
 
-.calendar_day, .clear_date, .today
+.calendar_day, .calendar_clear_date, .calendar_today
 {
     text-align: center;
     cursor: pointer;
@@ -55,7 +55,7 @@
 
 .calendar_prevmonth:hover, .calendar_nextyear:hover,
 .calendar_nextmonth:hover, .calendar_prevyear:hover,
-.calendar_day:hover, .clear_date:hover, .today:hover
+.calendar_day:hover, .calendar_clear_date:hover, .calendar_today:hover
 {
     background-color:tomato;
     

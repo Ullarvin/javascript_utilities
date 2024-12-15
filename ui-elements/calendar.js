@@ -1,28 +1,168 @@
 class calendar 
 {
-    current_day = "";
-    current_month = "";
-    current_year = "";
-
+    elements = "";
+    elements_type = "";
+    element = "";
+    current_day = 0;
+    current_month = 0;
+    current_year = 0;
 
     /**
      * initialize class
      */
-    constructor() 
+    constructor(elements) 
     {
         this.date = new Date();
         this.current_day = this.date.getDate();
         this.current_month = this.date.getMonth();
         this.current_year = this.date.getFullYear();
+        this.elements = elements;
+        this.elements_type = typeof elements;
+        
+        
+        if(this.elements_type == "object" || this.elements_type == "array"){
+            
+            for(const ele of elements)
+            {
+                this.addEvent(ele, "click", this);
+                this.addEvent(ele, "dblclick", this);
+            }
+        }
+        else
+        {
+            this.addEvent(elements, "click", this);
+            this.addEvent(elements, "dblclick", this);
+        }
+    }
 
-        //addEvent(ele,"onclick", "");
+    handleEvent(event) {
+        //events to affect element(s) passed to class
+        if(this.isElement(event.target))
+        {
+            switch (event.type) {
+                case "click":
+                    //assign current element
+                    this.element = event.target;
+                    //create and show calendar
+                    this.showCalendar(event.target);
+                    break;
+                case "dblclick":
+                    event.target.focus();
+                    break;
+            }
+        }
+        else if (event.target.classList.contains("calendar_day"))
+        {
+            switch (event.type) {
+                case "click":
+                    this.selectingDate(event.target, this.element, "day");
+                    break;
+                case "dblclick":
+                    break;
+            }
+        }
+        else
+        {
+            switch(event.target.id)
+            {
+                case "calendar_container":
+                    switch (event.type) {
+                        case 'blur':
+                            //remove calendar on blur
+                            this.removeCalendar();
+                            break;
+                    }
+                    break;
+                case "calendar_nextyear":
+                case "calendar_prevyear":
+                    switch (event.type) {
+                        case "click":
+                            //select previous or next year
+                            this.selectingDate(event.target, this.element, "year");
+                            break;
+                    }
+                    break;
+                case "calendar_nextmonth":
+                case "calendar_prevmonth":
+                    switch (event.type) {
+                        case "click":
+                            //select previous or next month
+                            this.selectingDate(event.target, this.element, "month");
+                            break;
+                    }
+                    break;
+                case "calendar_clear_date":
+                    switch (event.type) {
+                        case 'click':
+                            //set element to empty
+                            this.setValue(this.element, "");
+                            break;
+                    }
+                    
+                    break;
+                case "calendar_today":
+                    switch (event.type) {
+                        case 'click':
+                            //set element to todays date
+                            this.setDateToday();
+                            this.selectingDate(event.target, this.element, "today");
+                            break;
+                    }
+                    break;
+            }
+        }
+        
+
     }
 
     /**
-     * 
-     * @param {*} ele 
-     * @param {*} event 
-     * @param {*} funct 
+     * Determine if passed element exists within elements passed to class
+     * @param {element|object|array} element 
+     * @returns {bool}
+     */
+    isElement(element)
+    {
+        let exists = false;
+
+        if(this.elements_type == "object" || this.elements_type == "array"){
+            
+            for(const ele of this.elements)
+            {
+                if(ele == element)
+                {
+                    exists = true;
+                }
+            }
+        }
+        else
+        {
+            if(this.elements == element)
+            {
+                exists = true;
+            }
+        }
+
+        return exists;
+    }
+
+    setValue(element,value)
+    {
+        switch(element.tagName.toLowerCase())
+        {
+            case 'input':
+                element.value = value;
+                break;
+            default:
+                element.innerText = value;
+                break;
+        }
+    }
+
+    /**
+     * add event to elements
+     * @param {element} ele 
+     * @param {string} event 
+     * @param {funct} funct 
      * @returns 
      */
     addEvent(ele, event, funct)
@@ -90,9 +230,9 @@ class calendar
         return new Date(year, month, day).getDay();
     }
 
-    getDate(format = "Y-m-d")
+    getFormattedDate()
     {
-        return this.current_year + "-" + this.current_month + "-" + this.current_day;
+        return this.date.toLocaleDateString();
     }
 
     /**
@@ -104,6 +244,15 @@ class calendar
     setDate(year, month, day)
     {
         const date = new Date(year, month, day); 
+        this.date = date;
+        this.current_day = this.date.getDate();
+        this.current_month = this.date.getMonth();
+        this.current_year = this.date.getFullYear();
+    }
+
+    setDateToday()
+    {
+        const date = new Date(); 
         this.date = date;
         this.current_day = this.date.getDate();
         this.current_month = this.date.getMonth();
@@ -156,15 +305,21 @@ class calendar
 
         //create elements to make up table
         let div_container = this.createElements("div", "calendar_container", ["calendar_container"] );
-        let year = this.createElements("div", "", ["calendar_year_dd"], this.current_year );
-        let nextyear = this.createElements("div", "", ["calendar_nextyear"], ">>" );
-        let prevyear = this.createElements("div", "", ["calendar_prevyear"], "<<" );
-        let nextmonth = this.createElements("div", "", ["calendar_nextmonth"], ">>" );
-        let prevmonth = this.createElements("div", "", ["calendar_prevmonth"], "<<" );
-        let month = this.createElements("div", "", ["calendar_month_dd"], monthName);
-        let div_body = this.createElements("div", "", ["calendar_body"]);
-        let table = this.createElements("table", "", ["calendar_table"]);
-        let theader = this.createElements("thead", "", ["calendar_header"]);
+        //set on blur affect to remove calendar  
+        this.addEvent(div_container, "blur", this);
+        let year = this.createElements("div", "calendar_year_dd", ["calendar_year_dd"], this.current_year );
+        let nextyear = this.createElements("div", "calendar_nextyear", ["calendar_nextyear"], ">>" );
+        this.addEvent(nextyear, "click", this);
+        let prevyear = this.createElements("div", "calendar_prevyear", ["calendar_prevyear"], "<<" );
+        this.addEvent(prevyear, "click", this);
+        let nextmonth = this.createElements("div", "calendar_nextmonth", ["calendar_nextmonth"], ">>" );
+        this.addEvent(nextmonth, "click", this);
+        let prevmonth = this.createElements("div", "calendar_prevmonth", ["calendar_prevmonth"], "<<" );
+        this.addEvent(prevmonth, "click", this);
+        let month = this.createElements("div", "calendar_month_dd", ["calendar_month_dd"], monthName);
+        let div_body = this.createElements("div", "calendar_body", ["calendar_body"]);
+        let table = this.createElements("table", "calendar_table", ["calendar_table"]);
+        let theader = this.createElements("thead", "calendar_header", ["calendar_header"]);
         let tr = theader.insertRow();
         tr.classList.add("calendar_header_row");
         
@@ -198,14 +353,18 @@ class calendar
         tr.classList.add("calendar_row");
         td = tr.insertCell();
         td.colSpan = "3";
-        td.append(this.createElements("div", "", ["today"], "Today"));
+        let div_today_day = this.createElements("div", "calendar_today", ["calendar_today"], "Today");
+        this.addEvent(div_today_day, "click", this);
+        td.append(div_today_day);
 
         td = tr.insertCell();
         
         tr.classList.add("calendar_row");
         td = tr.insertCell();
         td.colSpan = "3";
-        td.append(this.createElements("div", "", ["clear_date"], "Clear"));
+        let div_clear_day = this.createElements("div", "calendar_clear_date", ["calendar_clear_date"], "Clear");
+        this.addEvent(div_clear_day, "click", this);
+        td.append(div_clear_day);
         tr = tbody.insertRow();
         tr.classList.add("calendar_row");
         
@@ -224,7 +383,7 @@ class calendar
 
                 td = tr.insertCell();
                 let div_num = this.createElements("div", "", ["calendar_day"], day);
-                div_num.onclick = function() { this.selectingDate(div_num, ele,"day") };
+                this.addEvent(div_num, "click", this);
                 td.appendChild(div_num);
                 day++;
             }
@@ -251,28 +410,37 @@ class calendar
      */
     selectingDate(parent, element, type)
     {
-        const types = {'day':0, 'month':1, 'year':2};
         let day = this.current_day;
         let month = this.current_month;
         let year = this.current_year;
 
-        switch(types.type)
+        switch(type)
         {
-            case 0:
-                day = parent.innerHTML;
+            case "day":
+                day = Number(parent.innerHTML);
                 break;
-            case 1:
-                if(parent.innerHTML == ">>")
+            case "month":
+                if(parent.id == "calendar_nextmonth")
                 {
                     month = this.getNextMonth();
+                    if(month == 0)
+                    {
+                        //go to next year
+                        year += 1;
+                    }
                 }
                 else
                 {
                     month = this.getNextMonth(-1);
+                    if(month == 11)
+                    {
+                        ////go to prevous year
+                        year -= 1;
+                    }
                 }
                 break;
-            case 2:
-                if(parent.innerHTML == ">>")
+            case "year":
+                if(parent.id == "calendar_nextyear")
                 {
                     year = this.getNextYear();
                 }
@@ -284,9 +452,18 @@ class calendar
         }
 
         //set new date
-        this.setDate(day, month, year);
-        console.log(element);
-        element.value = this.getDate();
+        this.setDate(year, month, day);
+
+        //we only set the element date when a "day" is clicked, other wise it's just navigation
+        if(type == "day" || type == "today")
+        {
+            this.setValue(element, this.getFormattedDate());
+        }
+        else
+        {
+            
+            this.showCalendar(this.element);
+        }
         
     }
 
@@ -296,28 +473,32 @@ class calendar
      */
     showCalendar(ele)
     {
+        this.removeCalendar();
+        //get body and calendar
         let body = document.body;
         let calendar = this.createCalender(ele);
-        
+        //set tabIndex since calendar is a div and require it for focus
+        calendar.tabIndex = -1;
+        //get offsets to align calendar to element
         var offsets = ele.getBoundingClientRect();
-        
+        //adjust calendar position to display under element
         calendar.style.top = (offsets.top + offsets.height) + "px";
         calendar.style.left = (offsets.left)-5 + "px";
-
         calendar.display = "block";
+        //append calendar to page body
         body.appendChild(calendar);
+        //set calendar as focus
+        calendar.focus(); 
+        //scroll to calendar if it is out of view (for smaller devices);
+        calendar.scrollIntoView(); 
     }
 
-    /**
-     * hide calendar when element is not active
-     */
-    hideCalendar()
+    removeCalendar()
     {
-        setTimeout(function() {
-            //your code to be executed after 1 second
+        if(document.getElementById("calendar_container") != null)
+        {
             document.getElementById("calendar_container").remove();
-          }, 10000);
-        
+        }
     }
 
     /**

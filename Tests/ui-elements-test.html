@@ -5,7 +5,7 @@
 
 <body>
     <div style="padding:5px; margin:2px; padding-left:200px;">
-        <input type="text" id="date1" class="date">
+        <input type="text" id="date1" class="date" value="">
     </div>
 
     <div style="padding:5px; margin:2px; padding-left:100px;">
@@ -22,13 +22,5 @@
 
 <script>
     var elements = document.getElementsByClassName("date");
-    const myCal = new calendar();
-    if(typeof elements == "object" || typeof elements == "array"){
-        for(const ele of elements)
-        {
-            console.log(ele);
-            ele.onfocus = function(){ myCal.showCalendar(ele) };
-            ele.onblur = function(){ myCal.hideCalendar() };
-        }
-    }
+    var myCal = new calendar(elements);
 </script>
