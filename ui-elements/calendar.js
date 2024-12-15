@@ -333,6 +333,7 @@ class calendar
         let monthName = this.getMonthName(this.current_year, this.current_month);
         let daysInMonth = this.calcMonth(this.current_year, this.current_month);
         let firstWeekDayOfMonth = this.getDayOfWeek(this.current_year, this.current_month, 1);
+        let daysOfWeek = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
         
         let weekGroups = [];
         weekGroups[0] = [];
@@ -342,13 +343,13 @@ class calendar
         //set on blur affect to remove calendar  
         this.addEvent(div_container, "blur", this);
         let year = this.createElements("div", "calendar_year_dd", ["calendar_year_dd"], this.current_year );
-        let nextyear = this.createElements("div", "calendar_nextyear", ["calendar_nextyear"], ">>" );
+        let nextyear = this.createElements("div", "calendar_nextyear", ["calendar_nextyear", "arrow", "right"], "" );
         this.addEvent(nextyear, "click", this);
-        let prevyear = this.createElements("div", "calendar_prevyear", ["calendar_prevyear"], "<<" );
+        let prevyear = this.createElements("div", "calendar_prevyear", ["calendar_prevyear", "arrow", "left"], "" );
         this.addEvent(prevyear, "click", this);
-        let nextmonth = this.createElements("div", "calendar_nextmonth", ["calendar_nextmonth"], ">>" );
+        let nextmonth = this.createElements("div", "calendar_nextmonth", ["calendar_nextmonth", "arrow", "right"], "" );
         this.addEvent(nextmonth, "click", this);
-        let prevmonth = this.createElements("div", "calendar_prevmonth", ["calendar_prevmonth"], "<<" );
+        let prevmonth = this.createElements("div", "calendar_prevmonth", ["calendar_prevmonth", "arrow", "left"], "" );
         this.addEvent(prevmonth, "click", this);
         let month = this.createElements("div", "calendar_month_dd", ["calendar_month_dd"], monthName);
         let div_body = this.createElements("div", "calendar_body", ["calendar_body"]);
@@ -399,6 +400,17 @@ class calendar
         let div_clear_day = this.createElements("div", "calendar_clear_date", ["calendar_clear_date"], "Clear");
         this.addEvent(div_clear_day, "click", this);
         td.append(div_clear_day);
+
+        tr = tbody.insertRow();
+        tr.classList.add("calendar_week_row");
+        for(const weekday of daysOfWeek)
+        {
+            td = tr.insertCell();
+            let weekday_div = this.createElements("div", "", ["calendar_weekday"], weekday);
+            //this.addEvent(weekday_div, "click", this);
+            td.appendChild(weekday_div);
+        }
+
         tr = tbody.insertRow();
         tr.classList.add("calendar_row");
         
@@ -517,7 +529,7 @@ class calendar
         var offsets = ele.getBoundingClientRect();
         //adjust calendar position to display under element
         calendar.style.top = (offsets.top + offsets.height) + "px";
-        calendar.style.left = (offsets.left)-5 + "px";
+        calendar.style.left = (offsets.left) + "px";
         calendar.display = "block";
         //append calendar to page body
         body.appendChild(calendar);

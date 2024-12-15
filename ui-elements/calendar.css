@@ -3,11 +3,21 @@
     width: 200px;
     position: absolute;
     padding-top: 5px;
+    z-index: 100;
+    font: 1rem "raleway", sans-serif;
+    font-size: bolder;
 }
 
 .calendar_body, .calendar_container
 {
     background-color: transparent;
+}
+
+.calendar_header
+{
+    background-color: #1abc9c;
+    font-weight: bolder;
+    color: #fff;
 }
 
 .calendar_header, .calendar_month_dd, .calendar_year_dd, .calendar_row
@@ -16,9 +26,10 @@
     text-align: center;
 }
 
-.calendar_tbody, .calendar_header
+.calendar_table
 {
-    box-shadow: 0px -1px 2px 2px #d67878;
+    /*box-shadow: 0px -1px 2px 2px #1abc9c;*/
+    border: 2px solid #000;
 }
 
 .calendar_table
@@ -26,10 +37,10 @@
     margin-left: auto;
     margin-right: auto;
     border-collapse: collapse;
-    background-color:rgb(243, 207, 159);
+    background-color: #dddddd;
 }
 
-.calendar_day, .calendar_clear_date, .calendar_today
+.calendar_weekday, .calendar_day, .calendar_clear_date, .calendar_today
 {
     text-align: center;
     cursor: pointer;
@@ -57,7 +68,37 @@
 .calendar_nextmonth:hover, .calendar_prevyear:hover,
 .calendar_day:hover, .calendar_clear_date:hover, .calendar_today:hover
 {
-    background-color:tomato;
-    
+    background-color:#12816b;
+    color: #fff;
 }
+
+.arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 5px;
+    margin: 5px;
+    width: 3px;
+    height: 3px;
+  }
+  
+  .right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+  }
+  
+  .left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+  }
+  
+  .up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+  }
+  
+  .down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+  }
 
