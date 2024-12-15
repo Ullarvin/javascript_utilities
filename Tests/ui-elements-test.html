@@ -15,12 +15,14 @@
         <input type="text" id="date3" class="date">
     </div>
     <div style="padding:5px; margin:2px;"><input type="time" id="time"></div>
+
+    <div><input type="date" id="date4" class="date"></div>
     
     <div id="test"></div>
 </body>
 </html>
 
 <script>
-    var elements = document.getElementsByClassName("date");
+    var elements = document.getElementsByClassName("date", "y/m/d");
     var myCal = new calendar(elements);
 </script>

@@ -1,6 +1,7 @@
 class calendar 
 {
     elements = "";
+    format = "m-d-y";
     elements_type = "";
     element = "";
     current_day = 0;
@@ -10,7 +11,7 @@ class calendar
     /**
      * initialize class
      */
-    constructor(elements) 
+    constructor(elements, format = "m-d-y") 
     {
         this.date = new Date();
         this.current_day = this.date.getDate();
@@ -18,6 +19,7 @@ class calendar
         this.current_year = this.date.getFullYear();
         this.elements = elements;
         this.elements_type = typeof elements;
+        this.format = format;
         
         //determine element(s) type and add event to elements for calendar popup
         if(this.elements_type == "object" || this.elements_type == "array"){
@@ -69,7 +71,11 @@ class calendar
                     switch (event.type) {
                         case 'blur':
                             //remove calendar on blur
-                            this.removeCalendar();
+                            if(this.element != document.activeElement)
+                            {
+                                this.removeCalendar();
+                            }
+                            
                             break;
                     }
                     break;
@@ -232,7 +238,34 @@ class calendar
 
     getFormattedDate()
     {
-        return this.date.toLocaleDateString();
+        let format = this.format;
+        let dateFormatted = "";
+
+        //for date input types since they require ISO format 
+        if(this.element.type.toLowerCase() == "date")
+        {
+            format = "y-m-d";
+        }
+        
+        for (const c of format) {
+            switch(c)
+            {
+                case "y":
+                    dateFormatted += this.date.getFullYear();
+                    break;
+                case "m":
+                    dateFormatted += ("0" + (parseInt(this.date.getMonth()) + 1)).slice(-2);
+                    break;
+                case "d":
+                    dateFormatted += ("0" + this.date.getDate()).slice(-2);
+                    break;
+                default:
+                    dateFormatted += c;
+                    break;
+            }   
+        }
+
+        return dateFormatted;
     }
 
     /**
