@@ -19,7 +19,7 @@ class calendar
         this.elements = elements;
         this.elements_type = typeof elements;
         
-        
+        //determine element(s) type and add event to elements for calendar popup
         if(this.elements_type == "object" || this.elements_type == "array"){
             
             for(const ele of elements)
