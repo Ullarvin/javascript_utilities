@@ -257,6 +257,7 @@ class calendar
         this.current_day = this.date.getDate();
         this.current_month = this.date.getMonth();
         this.current_year = this.date.getFullYear();
+        this.showCalendar(this.element);
     }
 
     /**
