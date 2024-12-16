@@ -1,10 +1,9 @@
 .calendar_container
 {
-    width: 200px;
     position: absolute;
     padding-top: 5px;
     z-index: 100;
-    font: 1rem "raleway", sans-serif;
+    font: 1rem "Raleway", sans-serif;
     font-size: bolder;
 }
 
@@ -20,7 +19,7 @@
     color: #fff;
 }
 
-.calendar_header, .calendar_month_dd, .calendar_year_dd, .calendar_row
+.calendar_header, .calendar_month_dd, .calendar_year_dd, .calendar_row, .calendar_time_row
 {
     margin:auto;
     text-align: center;
@@ -29,7 +28,9 @@
 .calendar_table
 {
     /*box-shadow: 0px -1px 2px 2px #1abc9c;*/
-    border: 2px solid #000;
+    border: 3px solid #000;
+    color: #000;
+    font-weight:bolder;
 }
 
 .calendar_table
@@ -38,14 +39,6 @@
     margin-right: auto;
     border-collapse: collapse;
     background-color: #dddddd;
-}
-
-.calendar_weekday, .calendar_day, .calendar_clear_date, .calendar_today
-{
-    text-align: center;
-    cursor: pointer;
-    padding: 2px;
-    margin: 2px;
 }
 
 .calendar_nextmonth, .calendar_nextyear 
@@ -62,6 +55,27 @@
     cursor: pointer;
     padding: 2px;
     margin: 2px;
+}
+
+.calendar_week_row, .calendar_other_row, .calendar_header_row
+{
+    border-top: 2px #000 solid;
+    border-bottom: 2px #000 solid;
+}
+
+.calendar_weekday, .calendar_day, .calendar_clear_date, .calendar_today
+{
+    text-align: center;
+    cursor: pointer;
+    padding: 2px;
+    margin: 2px;
+}
+
+
+
+.calendar_hour, .calendar_min, .calendar_sec, .calendar_msec
+{
+    width:25%;
 }
 
 .calendar_prevmonth:hover, .calendar_nextyear:hover,

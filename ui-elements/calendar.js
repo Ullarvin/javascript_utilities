@@ -7,6 +7,10 @@ class calendar
     current_day = 0;
     current_month = 0;
     current_year = 0;
+    current_hour = 0;
+    current_minute = 0;
+    current_seconds = 0;
+    current_mseconds = 0;
 
     /**
      * initialize class
@@ -17,6 +21,10 @@ class calendar
         this.current_day = this.date.getDate();
         this.current_month = this.date.getMonth();
         this.current_year = this.date.getFullYear();
+        this.current_hour = this.date.getHours();
+        this.current_minute = this.date.getMinutes();
+        this.current_seconds = this.date.getSeconds();
+        this.current_mseconds = this.date.getMilliseconds();
         this.elements = elements;
         this.elements_type = typeof elements;
         this.format = format;
@@ -71,10 +79,7 @@ class calendar
                     switch (event.type) {
                         case 'blur':
                             //remove calendar on blur
-                            if(this.element != document.activeElement)
-                            {
-                                this.removeCalendar();
-                            }
+                            this.removeCalendar();
                             
                             break;
                     }
@@ -246,25 +251,50 @@ class calendar
         {
             format = "y-m-d";
         }
+
+        switch(this.element.type.toLowerCase())
+        {
+            case "date":
+                format = "y-m-d";
+                break;
+            case "datetime-local":
+                format = "y-m-dTh:m:i";
+                break;
+            case "time":
+                format = "h:m:i";
+                break;
+        }
         
         for (const c of format) {
             switch(c)
             {
                 case "y":
-                    dateFormatted += this.date.getFullYear();
+                    dateFormatted += this.current_year;
                     break;
                 case "m":
-                    dateFormatted += ("0" + (parseInt(this.date.getMonth()) + 1)).slice(-2);
+                    dateFormatted += ("0" + (parseInt(this.current_month) + 1)).slice(-2);
                     break;
                 case "d":
-                    dateFormatted += ("0" + this.date.getDate()).slice(-2);
+                    dateFormatted += ("0" + this.current_day).slice(-2);
+                    break;
+                case "h":
+                    dateFormatted += ("0" + this.current_hour).slice(-2);
+                    break;
+                case "i":
+                    dateFormatted += ("0" + this.current_minute ).slice(-2);
+                    break;
+                case "s":
+                    dateFormatted += ("0" + this.current_seconds).slice(-2);
+                    break;
+                case "u":
+                    dateFormatted += ("0" + this.current_mseconds).slice(-2);
                     break;
                 default:
                     dateFormatted += c;
                     break;
             }   
         }
-
+        console.log(dateFormatted);
         return dateFormatted;
     }
 
@@ -273,14 +303,22 @@ class calendar
      * @param {int} year 
      * @param {int} month 
      * @param {int} day 
+     * @param {int} hour 
+     * @param {int} minute 
+     * @param {int} second 
+     * @param {int} msecond 
      */
-    setDate(year, month, day)
+    setDate(year, month, day, hour = 0, minute = 0, second = 0, msecond = 0)
     {
-        const date = new Date(year, month, day); 
+        const date = new Date(year, month, day, hour, minute, second, msecond); 
         this.date = date;
         this.current_day = this.date.getDate();
         this.current_month = this.date.getMonth();
         this.current_year = this.date.getFullYear();
+        this.current_hour = this.date.getHours();
+        this.current_minute = this.date.getMinutes();
+        this.current_seconds = this.date.getSeconds();
+        this.current_mseconds = this.date.getMilliseconds();
     }
 
     setDateToday()
@@ -290,6 +328,10 @@ class calendar
         this.current_day = this.date.getDate();
         this.current_month = this.date.getMonth();
         this.current_year = this.date.getFullYear();
+        this.current_hour = this.date.getHours();
+        this.current_minute = this.date.getMinutes();
+        this.current_seconds = this.date.getSeconds();
+        this.current_mseconds = this.date.getMilliseconds();
         this.showCalendar(this.element);
     }
 
@@ -386,6 +428,7 @@ class calendar
 
         tr = tbody.insertRow();
         tr.classList.add("calendar_row");
+        tr.classList.add("calendar_other_row");
         td = tr.insertCell();
         td.colSpan = "3";
         let div_today_day = this.createElements("div", "calendar_today", ["calendar_today"], "Today");
@@ -439,12 +482,49 @@ class calendar
                 td.appendChild(document.createTextNode(""));
             }
         }
-        
+
+        //add time selects
+        let select_hour = this.createElements("select", "calendar_hour", ["calendar_hour"], this.current_hour);
+        let select_min = this.createElements("select", "calendar_min", ["calendar_min"], this.current_minute);
+        let select_sec = this.createElements("select", "calendar_sec", ["calendar_sec"], this.current_seconds);
+        let select_msec = this.createElements("select", "calendar_msec", ["calendar_msec"], this.current_mseconds);
+
+        for(let i=0; i<100; i++)
+        {
+            let value = (("0" +i).slice(2));
+            let option = this.createElements("option", "", [], value);
+            this.setValue(option, value);
+
+            if(i < 23)
+            {
+
+                
+                select_hour.append(option);
+            }
+
+            if(i < 60)
+            {
+                select_min.append(option);
+                select_sec.append(option);
+            }
+
+            select_msec.append(option);
+        }
+
+        tr = tbody.insertRow();
+        tr.classList.add("calendar_time_row");
+        td = tr.insertCell();
+        td.colSpan = "7";
+        td.append(select_hour);
+        td.append(select_min);
+        td.append(select_sec);
+        td.append(select_msec);
+
+
         table.appendChild(theader);
         table.appendChild(tbody);
         div_body.appendChild(table);
         div_container.appendChild(div_body);
-
         return div_container;
 
     }
@@ -533,6 +613,7 @@ class calendar
         calendar.display = "block";
         //append calendar to page body
         body.appendChild(calendar);
+        console.log(calendar.getBoundingClientRect());
         //set calendar as focus
         calendar.focus(); 
         //scroll to calendar if it is out of view (for smaller devices);
