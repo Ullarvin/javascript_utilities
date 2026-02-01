@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="../ui-elements/video-player.css">
+<script src="../ui-elements/video-player.js"></script> 
+<head>
+  <title>Video Player</title>
+</head>
+
+<body>
+  <div id="video_player" style="width:500px;"></div>
+</body>
+
+<script>
+  //array of videos
+  let videos = [
+    'videos/1.mp4', //this uses video & source tag
+    'videos/2.mp4', //this uses video & source tag
+    'https://www.youtube.com/embed/tgbNymZ7vqY?controls=1', //this uses iframe
+    'https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4', //this uses iframe
+  ];
+
+  //element or elements that will contain the video player
+  let elements = document.getElementById("video_player"); //get parent element
+  let videoPlayer = new VideoPlayer(); //initiate clss
+  videoPlayer.setElements(elements); //set parent element(s)
+  videoPlayer.setUrls(videos); //set url(s)
+  videoPlayer.showPlayer(); //diplsay player
+</script>
+
+</html>
